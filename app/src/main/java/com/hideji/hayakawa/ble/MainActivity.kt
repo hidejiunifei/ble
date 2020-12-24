@@ -49,13 +49,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        val bluetoothAdapter = bluetoothManager.adapter
-        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(enableBtIntent, 1)
-        }
-
         scanstart.setOnClickListener {
             if (mConnected) {
                 val characteristic: BluetoothGattCharacteristic? = mBluetoothLeService?.mBluetoothGatt?.getService (UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb"))
