@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothManager
 import android.content.*
+import android.os.BatteryManager
 import android.os.Bundle
 import android.os.IBinder
 import androidx.appcompat.app.AppCompatActivity
@@ -45,30 +46,48 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val batteryReceiver = object : BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val level: Int = intent!!.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+            val scale: Int = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+
+            if (mConnected) {
+                if (level * 100 / scale.toFloat() > 84) {
+                    writeCharacteristic("desligar\n")
+                } else if (level * 100 / scale.toFloat() < 50) {
+                    writeCharacteristic("ligar\n")
+                }
+            }
+        }
+    }
+
+    private fun writeCharacteristic(value : String)
+    {
+        if (mConnected) {
+            val characteristic: BluetoothGattCharacteristic? =
+                mBluetoothLeService?.mBluetoothGatt?.getService(UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb"))
+                    ?.getCharacteristic(
+                        UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
+                    )
+            characteristic?.setValue(value)
+            mBluetoothLeService?.mBluetoothGatt?.writeCharacteristic(characteristic)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        scanstart.setOnClickListener {
-            if (mConnected) {
-                val characteristic: BluetoothGattCharacteristic? = mBluetoothLeService?.mBluetoothGatt?.getService (UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb"))
-                    ?.getCharacteristic(
-                        UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
-                    )
-                characteristic?.setValue("ligar\n")
-                mBluetoothLeService?.mBluetoothGatt?.writeCharacteristic(characteristic)
-            }
+        val batteryStatus: Intent? = registerReceiver(batteryReceiver,
+            IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+        )
+
+        btnOn.setOnClickListener {
+            writeCharacteristic("ligar\n")
         }
 
-        scanstop.setOnClickListener {
-            if (mConnected) {
-                val characteristic: BluetoothGattCharacteristic? = mBluetoothLeService?.mBluetoothGatt?.getService (UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb"))
-                    ?.getCharacteristic(
-                        UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
-                    )
-                characteristic?.setValue("desligar\n")
-                mBluetoothLeService?.mBluetoothGatt?.writeCharacteristic(characteristic)
-            }
+        btnOff.setOnClickListener {
+            writeCharacteristic("desligar\n")
         }
 
         val gattServiceIntent = Intent(this, BluetoothLeService::class.java)
