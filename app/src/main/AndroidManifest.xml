@@ -19,7 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="BluetoothLeService" />
     </application>
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
 </manifest>
