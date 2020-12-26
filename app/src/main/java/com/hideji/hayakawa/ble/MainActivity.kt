@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
             if (level * 100 / scale.toFloat() > 84) {
                 writeCharacteristic("desligar\n")
-            } else if (level * 100 / scale.toFloat() < 50) {
+            } else if (level * 100 / scale.toFloat() < 26) {
                 writeCharacteristic("ligar\n")
             }
         }
