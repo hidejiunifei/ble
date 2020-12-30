@@ -50,6 +50,7 @@ class BleService : Service() {
 
     private var wakeLock: PowerManager.WakeLock? = null
     private var isServiceStarted = false
+    private var isReceiverRegistered = false
     override fun onBind(intent: Intent): IBinder {
         TODO("Return the communication channel to the service.")
     }
@@ -81,10 +82,13 @@ class BleService : Service() {
 
         GlobalScope.launch(Dispatchers.IO) {
             while (isServiceStarted) {
-                launch(Dispatchers.IO) {
-                    registerReceiver(batteryReceiver,
-                        IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-                    )
+                if (!isReceiverRegistered){
+                    isReceiverRegistered = true
+                    launch(Dispatchers.IO) {
+                        registerReceiver(batteryReceiver,
+                            IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+                        )
+                    }
                 }
                 delay(60 * 1 *1000)
             }
@@ -115,6 +119,7 @@ class BleService : Service() {
             stopForeground(true)
             stopSelf()
             unregisterReceiver(batteryReceiver)
+            isReceiverRegistered = false
         } catch (e: Exception) {
         }
         isServiceStarted = false
@@ -123,7 +128,7 @@ class BleService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        var notification = createNotification()
+        val notification = createNotification()
         startForeground(1, notification)
     }
 
@@ -132,31 +137,29 @@ class BleService : Service() {
 
         // depending on the Android API that we're dealing with we will have
         // to use a specific method to create the notification
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager;
-            val channel = NotificationChannel(
-                notificationChannelId,
-                "Ble Service notifications channel",
-                NotificationManager.IMPORTANCE_HIGH
-            ).let {
-                it.description = "Ble Service channel"
-                it.enableLights(true)
-                it.lightColor = Color.RED
-                it.enableVibration(true)
-                it.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
-                it
-            }
-            notificationManager.createNotificationChannel(channel)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager;
+        val channel = NotificationChannel(
+            notificationChannelId,
+            "Ble Service notifications channel",
+            NotificationManager.IMPORTANCE_HIGH
+        ).let {
+            it.description = "Ble Service channel"
+            it.enableLights(true)
+            it.lightColor = Color.RED
+            it.enableVibration(true)
+            it.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
+            it
         }
+        notificationManager.createNotificationChannel(channel)
 
         val pendingIntent: PendingIntent = Intent(this, MainActivity::class.java).let { notificationIntent ->
             PendingIntent.getActivity(this, 0, notificationIntent, 0)
         }
 
-        val builder: Notification.Builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Notification.Builder(
+        val builder: Notification.Builder = Notification.Builder(
             this,
             notificationChannelId
-        ) else Notification.Builder(this)
+        )
 
         return builder
             .setContentTitle("Ble Service")
