@@ -4,7 +4,6 @@ import android.app.*
 import android.content.*
 import android.graphics.Color
 import android.os.BatteryManager
-import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import android.widget.Toast
@@ -50,7 +49,7 @@ class BleService : Service() {
 
     private var wakeLock: PowerManager.WakeLock? = null
     private var isServiceStarted = false
-    private var isReceiverRegistered = false
+    private var isCheckingStatusRunning = false
     override fun onBind(intent: Intent): IBinder {
         TODO("Return the communication channel to the service.")
     }
@@ -82,12 +81,10 @@ class BleService : Service() {
 
         GlobalScope.launch(Dispatchers.IO) {
             while (isServiceStarted) {
-                if (!isReceiverRegistered){
-                    isReceiverRegistered = true
+                if (!isCheckingStatusRunning){
+                    isCheckingStatusRunning = true
                     launch(Dispatchers.IO) {
-                        registerReceiver(batteryReceiver,
-                            IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-                        )
+                        checkBatteryStatus()
                     }
                 }
                 delay(60 * 1 *1000)
@@ -95,17 +92,20 @@ class BleService : Service() {
         }
     }
 
-    private val batteryReceiver = object : BroadcastReceiver(){
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val level: Int = intent!!.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-            val scale: Int = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-
-            if (level * 100 / scale.toFloat() > 84) {
-                writeCharacteristic(applicationContext,"desligar\n")
-            } else if (level * 100 / scale.toFloat() < 26) {
-                writeCharacteristic(applicationContext,"ligar\n")
-            }
+    private fun checkBatteryStatus(){
+        val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { filter ->
+            applicationContext.registerReceiver(null, filter)
         }
+
+        val level: Int = batteryStatus!!.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+        val scale: Int = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+
+        if (level * 100 / scale.toFloat() > 84) {
+            writeCharacteristic(applicationContext,"desligar\n")
+        } else if (level * 100 / scale.toFloat() < 26) {
+            writeCharacteristic(applicationContext,"ligar\n")
+        }
+        isCheckingStatusRunning = false
     }
 
     private fun stopService() {
@@ -118,8 +118,6 @@ class BleService : Service() {
             }
             stopForeground(true)
             stopSelf()
-            unregisterReceiver(batteryReceiver)
-            isReceiverRegistered = false
         } catch (e: Exception) {
         }
         isServiceStarted = false
