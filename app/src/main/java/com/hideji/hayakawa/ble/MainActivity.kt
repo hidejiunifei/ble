@@ -38,6 +38,14 @@ class MainActivity : AppCompatActivity() {
         mBluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         mBluetoothAdapter = mBluetoothManager!!.adapter
         mBluetoothDevice = mBluetoothAdapter!!.getRemoteDevice(mDeviceAddress)
+        var intentFilter : IntentFilter = IntentFilter(Intent.ACTION_POWER_CONNECTED)
+        registerReceiver(powerConnectedReceiver, intentFilter)
+    }
+
+    private var powerConnectedReceiver = object : BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            actionOnService(Actions.START)
+        }
     }
 
     private fun actionOnService(action: Actions) {
