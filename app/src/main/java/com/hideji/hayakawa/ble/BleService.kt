@@ -94,16 +94,16 @@ class BleService : Service() {
 
     private fun checkBatteryStatus(){
         val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { filter ->
-            applicationContext.registerReceiver(null, filter)
+            registerReceiver(null, filter)
         }
 
         val level: Int = batteryStatus!!.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
         val scale: Int = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
 
         if (level * 100 / scale.toFloat() > 84) {
-            writeCharacteristic(applicationContext,"desligar\n")
+            writeCharacteristic(this,"desligar\n")
         } else if (level * 100 / scale.toFloat() < 26) {
-            writeCharacteristic(applicationContext,"ligar\n")
+            writeCharacteristic(this,"ligar\n")
         }
         isCheckingStatusRunning = false
     }
