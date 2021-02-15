@@ -163,7 +163,7 @@ class BleService : Service() {
             .setContentTitle("Ble Service")
             .setContentText("Ble Service working")
             .setContentIntent(pendingIntent)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_stat_name)
             .setTicker("Ticker text")
             .setPriority(Notification.PRIORITY_HIGH) // for under android 26 compatibility
             .build()
