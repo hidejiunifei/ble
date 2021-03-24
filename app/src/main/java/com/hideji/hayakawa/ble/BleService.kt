@@ -85,17 +85,17 @@ class BleService : Service() {
                     isCheckingStatusRunning = true
                     launch(Dispatchers.IO) {
                         checkBatteryStatus()
+                        delay(60 * 1 *1000)
                     }
                 }
-                delay(60 * 1 *1000)
             }
         }
     }
 
     private fun checkBatteryStatus(){
-        val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { filter ->
-            registerReceiver(null, filter)
-        }
+        val batteryStatus: Intent? = registerReceiver(null,
+            IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+        )
 
         val level: Int = batteryStatus!!.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
         val scale: Int = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
