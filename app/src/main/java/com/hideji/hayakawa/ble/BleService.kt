@@ -85,9 +85,10 @@ class BleService : Service() {
                     isCheckingStatusRunning = true
                     launch(Dispatchers.IO) {
                         checkBatteryStatus()
-                        delay(60 * 1 *1000)
                     }
+
                 }
+                delay(60 *1000)
             }
         }
     }
