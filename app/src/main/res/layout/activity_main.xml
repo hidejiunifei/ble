@@ -20,25 +20,21 @@
             android:id="@+id/btnOn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Turn on" />
 
         <Button
             android:id="@+id/btnOff"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Turn off" />
 
         <Button
-            android:layout_weight="1"
             android:id="@+id/btnServiceOn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Service on" />
 
         <Button
-            android:layout_weight="1"
             android:id="@+id/btnServiceOff"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
