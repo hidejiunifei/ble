@@ -15,7 +15,12 @@ class BleUtils {
 
         fun writeCharacteristic(context: Context, value: String) {
             mMessage = value
-            mBluetoothGatt = mBluetoothDevice.connectGatt(context, false, mGattCallback)
+
+            if (!mBluetoothAdapter.isEnabled) {
+                mBluetoothAdapter.enable()
+                mBluetoothGatt = mBluetoothDevice.connectGatt(context, false, mGattCallback)
+                mBluetoothAdapter.disable()
+            }
         }
 
         private val mGattCallback = object : BluetoothGattCallback() {

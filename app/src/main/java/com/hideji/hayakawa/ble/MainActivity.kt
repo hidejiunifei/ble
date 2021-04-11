@@ -24,23 +24,11 @@ class MainActivity : AppCompatActivity() {
         StrictMode.setThreadPolicy(policy)
 
         btnOn.setOnClickListener {
-            if (!mBluetoothAdapter.isEnabled) {
-                mBluetoothAdapter.enable()
-                writeCharacteristic(applicationContext, "ligar\n")
-                mBluetoothAdapter.disable()
-            }
-            else
                 writeCharacteristic(applicationContext, "ligar\n")
         }
 
         btnOff.setOnClickListener {
-            if (!mBluetoothAdapter.isEnabled) {
-                mBluetoothAdapter.enable()
                 writeCharacteristic(applicationContext, "desligar\n")
-                mBluetoothAdapter.disable()
-            }
-            else
-                writeCharacteristic(applicationContext,"desligar\n")
         }
 
         btnServiceOn.setOnClickListener {
