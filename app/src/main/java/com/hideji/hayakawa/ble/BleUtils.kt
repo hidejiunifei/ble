@@ -4,11 +4,9 @@ import android.bluetooth.*
 import android.content.Context
 import java.util.*
 
-var mDeviceAddress: String? = "D4:36:39:6B:97:67"
-lateinit var mBluetoothManager: BluetoothManager
-lateinit var mBluetoothAdapter: BluetoothAdapter
 lateinit var mBluetoothDevice: BluetoothDevice
 lateinit var mBluetoothGatt: BluetoothGatt
+lateinit var mBluetoothAdapter: BluetoothAdapter
 
 class BleUtils {
 

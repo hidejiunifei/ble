@@ -102,9 +102,22 @@ class BleService : Service() {
         val scale: Int = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
 
         if (level * 100 / scale.toFloat() > 84) {
-            writeCharacteristic(this,"desligar\n")
+
+            if (!mBluetoothAdapter.isEnabled) {
+                mBluetoothAdapter.enable()
+                writeCharacteristic(this,"desligar\n")
+                mBluetoothAdapter.disable()
+            }
+            else
+                writeCharacteristic(this,"desligar\n")
         } else if (level * 100 / scale.toFloat() < 26) {
-            writeCharacteristic(this,"ligar\n")
+            if (!mBluetoothAdapter.isEnabled) {
+                mBluetoothAdapter.enable()
+                writeCharacteristic(this,"ligar\n")
+                mBluetoothAdapter.disable()
+            }
+            else
+                writeCharacteristic(this,"ligar\n")
         }
         isCheckingStatusRunning = false
     }

@@ -9,6 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.hideji.hayakawa.ble.BleUtils.Companion.writeCharacteristic
 import kotlinx.android.synthetic.main.activity_main.*
 
+var mDeviceAddress: String? = "D4:36:39:6B:97:67"
+//lateinit var mBluetoothAdapter: BluetoothAdapter
+lateinit var mBluetoothManager: BluetoothManager
+
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,11 +24,23 @@ class MainActivity : AppCompatActivity() {
         StrictMode.setThreadPolicy(policy)
 
         btnOn.setOnClickListener {
-            writeCharacteristic(applicationContext,"ligar\n")
+            if (!mBluetoothAdapter.isEnabled) {
+                mBluetoothAdapter.enable()
+                writeCharacteristic(applicationContext, "ligar\n")
+                mBluetoothAdapter.disable()
+            }
+            else
+                writeCharacteristic(applicationContext, "ligar\n")
         }
 
         btnOff.setOnClickListener {
-            writeCharacteristic(applicationContext,"desligar\n")
+            if (!mBluetoothAdapter.isEnabled) {
+                mBluetoothAdapter.enable()
+                writeCharacteristic(applicationContext, "desligar\n")
+                mBluetoothAdapter.disable()
+            }
+            else
+                writeCharacteristic(applicationContext,"desligar\n")
         }
 
         btnServiceOn.setOnClickListener {
