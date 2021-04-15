@@ -18,8 +18,8 @@ class BleUtils {
 
             if (!mBluetoothAdapter.isEnabled) {
                 mBluetoothAdapter.enable()
-                mBluetoothGatt = mBluetoothDevice.connectGatt(context, false, mGattCallback)
             }
+            mBluetoothGatt = mBluetoothDevice.connectGatt(context, false, mGattCallback)
         }
 
         private val mGattCallback = object : BluetoothGattCallback() {
