@@ -25,25 +25,11 @@ class MainActivity : AppCompatActivity() {
         StrictMode.setThreadPolicy(policy)
 
         btnOn.setOnClickListener {
-            val batteryStatus: Intent? = registerReceiver(null,
-                IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-            )
-            val status: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
-            val isCharging: Boolean = status == BatteryManager.BATTERY_STATUS_CHARGING
-
-            if (!isCharging)
-                writeCharacteristic(applicationContext, "ligar\n")
+            writeCharacteristic(applicationContext, "ligar\n")
         }
 
         btnOff.setOnClickListener {
-            val batteryStatus: Intent? = registerReceiver(null,
-                IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-            )
-            val status: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
-            val isCharging: Boolean = status == BatteryManager.BATTERY_STATUS_CHARGING
-
-            if (isCharging)
-                writeCharacteristic(applicationContext, "desligar\n")
+            writeCharacteristic(applicationContext, "desligar\n")
         }
 
         btnServiceOn.setOnClickListener {

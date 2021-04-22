@@ -100,12 +100,10 @@ class BleService : Service() {
 
         val level: Int = batteryStatus!!.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
         val scale: Int = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-        val status: Int = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
-        val isCharging: Boolean = status == BatteryManager.BATTERY_STATUS_CHARGING
 
-        if (level * 100 / scale.toFloat() > 84 && isCharging) {
+        if (level * 100 / scale.toFloat() > 84) {
                 writeCharacteristic(this,"desligar\n")
-        } else if (level * 100 / scale.toFloat() < 26 && !isCharging) {
+        } else if (level * 100 / scale.toFloat() < 26) {
                 writeCharacteristic(this,"ligar\n")
         }
         isCheckingStatusRunning = false
