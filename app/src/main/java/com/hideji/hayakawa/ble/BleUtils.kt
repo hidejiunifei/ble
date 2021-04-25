@@ -23,8 +23,7 @@ class BleUtils {
             mBluetoothAdapter.enable()
 
             if (mBlueToothGatt != null) {
-                mBlueToothGatt?.disconnect()
-                mBlueToothGatt = null
+                mBlueToothGatt?.close()
             }
             mBluetoothDevice.connectGatt(context, false, mGattCallback)
         }
@@ -47,7 +46,7 @@ class BleUtils {
                             )
                     characteristic?.setValue(mMessage)
                     gatt.writeCharacteristic(characteristic)
-                    gatt.disconnect()
+                    gatt.close()
                     mBluetoothAdapter.disable()
                 }
             }
