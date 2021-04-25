@@ -10,9 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.hideji.hayakawa.ble.BleUtils.Companion.writeCharacteristic
 import kotlinx.android.synthetic.main.activity_main.*
 
-var mDeviceAddress: String? = "D4:36:39:6B:97:67"
-lateinit var mBluetoothManager: BluetoothManager
-
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +27,7 @@ class MainActivity : AppCompatActivity() {
             val status: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
             val isCharging: Boolean = status == BatteryManager.BATTERY_STATUS_CHARGING
 
-            if (!isCharging)
+            //if (!isCharging)
                 writeCharacteristic(applicationContext, "ligar\n")
         }
 
@@ -53,9 +50,6 @@ class MainActivity : AppCompatActivity() {
             actionOnService(Actions.STOP)
         }
 
-        mBluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        mBluetoothAdapter = mBluetoothManager.adapter
-        mBluetoothDevice = mBluetoothAdapter.getRemoteDevice(mDeviceAddress)
         var intentFilter : IntentFilter = IntentFilter(Intent.ACTION_POWER_CONNECTED)
         registerReceiver(powerConnectedReceiver, intentFilter)
     }
