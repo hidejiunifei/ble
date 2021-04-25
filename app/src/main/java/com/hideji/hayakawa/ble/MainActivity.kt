@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
             val status: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
             val isCharging: Boolean = status == BatteryManager.BATTERY_STATUS_CHARGING
 
-            //if (!isCharging)
+            if (!isCharging)
                 writeCharacteristic(applicationContext, "ligar\n")
         }
 
