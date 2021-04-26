@@ -7,7 +7,7 @@ import android.os.BatteryManager
 import android.os.IBinder
 import android.os.PowerManager
 import android.widget.Toast
-import com.hideji.hayakawa.ble.BleUtils.Companion.writeCharacteristic
+import com.hideji.hayakawa.ble.BleUtils.Companion.sendData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -104,9 +104,9 @@ class BleService : Service() {
         val isCharging: Boolean = status == BatteryManager.BATTERY_STATUS_CHARGING
 
         if (level * 100 / scale.toFloat() > 84 && isCharging) {
-                writeCharacteristic(this,"desligar\n")
+                sendData(this,"desligar\n")
         } else if (level * 100 / scale.toFloat() < 26 && !isCharging) {
-                writeCharacteristic(this,"ligar\n")
+                sendData(this,"ligar\n")
         }
         isCheckingStatusRunning = false
     }

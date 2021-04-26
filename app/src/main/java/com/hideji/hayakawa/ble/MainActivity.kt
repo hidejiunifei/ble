@@ -1,15 +1,12 @@
 package com.hideji.hayakawa.ble
 
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.*
-import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import androidx.appcompat.app.AppCompatActivity
-import com.hideji.hayakawa.ble.BleUtils.Companion.writeCharacteristic
+import com.hideji.hayakawa.ble.BleUtils.Companion.sendData
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -26,11 +23,11 @@ class MainActivity : AppCompatActivity() {
         StrictMode.setThreadPolicy(policy)
 
         btnOn.setOnClickListener {
-            writeCharacteristic(applicationContext, "ligar\n")
+            sendData(applicationContext, "ligar\n")
         }
 
         btnOff.setOnClickListener {
-            writeCharacteristic(applicationContext, "desligar\n")
+            sendData(applicationContext, "desligar\n")
         }
 
         btnServiceOn.setOnClickListener {
@@ -44,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         mBluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         mBluetoothAdapter = mBluetoothManager.adapter
         mBluetoothDevice = mBluetoothAdapter.getRemoteDevice(mDeviceAddress)
+        mBluetoothAdapter.enable()
 
         var intentFilter : IntentFilter = IntentFilter(Intent.ACTION_POWER_CONNECTED)
         registerReceiver(powerConnectedReceiver, intentFilter)

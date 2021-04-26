@@ -13,20 +13,17 @@ class BleUtils {
     companion object {
         private lateinit var mMessage: String
 
-        fun writeCharacteristic(context: Context, value: String) {
+        fun sendData(context: Context, value: String) {
 
             mMessage = value
 
-            if (mBluetoothAdapter.isEnabled) {
-                mBluetoothAdapter.disable()
-            }
-
-            mBluetoothAdapter.enable()
-            if (mBluetoothGatt == null)
+            if (mBluetoothGatt == null) {
                 mBluetoothGatt = mBluetoothDevice.connectGatt(context, false, mGattCallback)
+            }
         }
 
         private val mGattCallback = object : BluetoothGattCallback() {
+
             override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
                     gatt.discoverServices()
@@ -42,7 +39,6 @@ class BleUtils {
                             )
                     characteristic?.setValue(mMessage)
                     gatt.writeCharacteristic(characteristic)
-                    mBluetoothAdapter.disable()
                     mBluetoothGatt = null
                 }
             }
