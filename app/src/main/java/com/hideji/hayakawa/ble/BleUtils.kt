@@ -4,10 +4,9 @@ import android.bluetooth.*
 import android.content.Context
 import java.util.*
 
-var mDeviceAddress: String? = "D4:36:39:6B:97:67"
-lateinit var mBluetoothManager: BluetoothManager
 lateinit var mBluetoothDevice: BluetoothDevice
 lateinit var mBluetoothAdapter: BluetoothAdapter
+var mBluetoothGatt: BluetoothGatt? = null
 
 class BleUtils {
 
@@ -16,10 +15,6 @@ class BleUtils {
 
         fun writeCharacteristic(context: Context, value: String) {
 
-            mBluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-            mBluetoothAdapter = mBluetoothManager.adapter
-            mBluetoothDevice = mBluetoothAdapter.getRemoteDevice(mDeviceAddress)
-
             mMessage = value
 
             if (mBluetoothAdapter.isEnabled) {
@@ -27,14 +22,16 @@ class BleUtils {
             }
 
             mBluetoothAdapter.enable()
-
-            mBluetoothDevice.connectGatt(context, false, mGattCallback)
+            mBluetoothGatt = mBluetoothDevice.connectGatt(context, false, mGattCallback)
         }
 
         private val mGattCallback = object : BluetoothGattCallback() {
             override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
                     gatt.discoverServices()
+                }
+                else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                    mBluetoothGatt = null
                 }
             }
 
