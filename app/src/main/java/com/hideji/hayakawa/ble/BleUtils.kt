@@ -22,16 +22,14 @@ class BleUtils {
             }
 
             mBluetoothAdapter.enable()
-            mBluetoothGatt = mBluetoothDevice.connectGatt(context, false, mGattCallback)
+            if (mBluetoothGatt == null)
+                mBluetoothGatt = mBluetoothDevice.connectGatt(context, false, mGattCallback)
         }
 
         private val mGattCallback = object : BluetoothGattCallback() {
             override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
                     gatt.discoverServices()
-                }
-                else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                    mBluetoothGatt = null
                 }
             }
 
@@ -45,6 +43,7 @@ class BleUtils {
                     characteristic?.setValue(mMessage)
                     gatt.writeCharacteristic(characteristic)
                     mBluetoothAdapter.disable()
+                    mBluetoothGatt = null
                 }
             }
         }
