@@ -12,6 +12,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import android.app.PendingIntent
+
+import android.content.Intent
+
+
+
 
 enum class Actions
 {
@@ -162,6 +168,15 @@ class BleService : Service() {
             notificationChannelId
         )
 
+        val stopSelf = Intent(this, this::class.java)
+        val ACTION_STOP_SERVICE = "STOP"
+        stopSelf.action = ACTION_STOP_SERVICE
+
+        val pStopSelf = PendingIntent
+            .getService(
+                this, 0, stopSelf, PendingIntent.FLAG_CANCEL_CURRENT
+            )
+
         return builder
             .setContentTitle("Ble Service")
             .setContentText("Ble Service working")
@@ -169,6 +184,7 @@ class BleService : Service() {
             .setSmallIcon(R.drawable.ic_stat_name)
             .setTicker("Ticker text")
             .setPriority(Notification.PRIORITY_HIGH) // for under android 26 compatibility
+            .addAction(R.drawable.ic_launcher_foreground, "stop service",pStopSelf)
             .build()
     }
 
